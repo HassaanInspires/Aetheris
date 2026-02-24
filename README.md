@@ -23,7 +23,7 @@ Aetheris is a stunning, AI-native Chrome Extension that transforms your "New Tab
 5. Open a new tab and enjoy!
 
 ## 📸 Preview
-https://github.com/HassaanInspires/Aetheris/blob/main/Screenshot%201.png
+*(https://github.com/HassaanInspires/Aetheris/blob/main/Screenshot%201.png)*
 [*Screenshot 2*](https://github.com/HassaanInspires/Aetheris/blob/main/Screenshot%202.png)
 [*Screenshot 3*](https://github.com/HassaanInspires/Aetheris/blob/main/Screenshot%203.png)
 [*Screenshot 4*](https://github.com/HassaanInspires/Aetheris/blob/main/Screenshot%204.png)

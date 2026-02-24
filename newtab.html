@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aetheris</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Background Layer -->
+    <canvas id="particleCanvas"></canvas>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="orb orb-4"></div>
+
+    <!-- Focus Mode Overlay -->
+    <div id="focusOverlay" class="focus-overlay hidden">
+        <div class="focus-content">
+            <div id="focusQuote" class="focus-quote"></div>
+            <button id="exitFocus" class="glass-btn focus-exit-btn" aria-label="Exit Focus Mode">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- UI Layer -->
+    <div class="scene" id="mainScene">
+        <!-- Top Right Settings -->
+        <button id="settingsBtn" class="glass-btn icon-btn" aria-label="Open Settings">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="3"></circle>
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+            </svg>
+        </button>
+
+        <!-- Top Right: Focus Mode Button -->
+        <button id="focusBtn" class="glass-btn icon-btn focus-toggle-btn" aria-label="Toggle Focus Mode">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <circle cx="12" cy="12" r="6"></circle>
+                <circle cx="12" cy="12" r="2"></circle>
+            </svg>
+        </button>
+
+        <!-- Top Left: Pomodoro Timer -->
+        <div id="pomodoroWidget" class="widget-container pomodoro-container focus-hideable">
+            <div class="widget-header">
+                <span id="pomodoroTitle">Pomodoro</span>
+                <button id="togglePomodoro" class="icon-btn-small" aria-label="Toggle Pomodoro">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
+                </button>
+            </div>
+            <div class="pomodoro-body" id="pomodoroBody">
+                <div class="pomodoro-ring-wrapper">
+                    <svg class="pomodoro-ring" viewBox="0 0 120 120">
+                        <circle class="pomodoro-ring-bg" cx="60" cy="60" r="52"></circle>
+                        <circle class="pomodoro-ring-progress" id="pomodoroProgress" cx="60" cy="60" r="52"></circle>
+                    </svg>
+                    <div class="pomodoro-time" id="pomodoroTime">25:00</div>
+                </div>
+                <div class="pomodoro-status" id="pomodoroStatus">Ready to focus</div>
+                <div class="pomodoro-controls">
+                    <button id="pomodoroStart" class="pomodoro-btn" aria-label="Start Timer">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                    </button>
+                    <button id="pomodoroPause" class="pomodoro-btn hidden" aria-label="Pause Timer">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
+                    </button>
+                    <button id="pomodoroReset" class="pomodoro-btn" aria-label="Reset Timer">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+                    </button>
+                </div>
+                <div class="pomodoro-sessions">
+                    <span id="pomodoroSessions">0</span> sessions completed
+                </div>
+            </div>
+        </div>
+
+        <!-- Center: Clock & Greeting -->
+        <div class="center-container">
+            <div id="greeting" class="greeting">Good Morning</div>
+            <div id="clock" class="clock">12:00</div>
+            <div id="dateDisplay" class="date-display"></div>
+        </div>
+
+        <!-- Center Bottom: Search -->
+        <div class="search-container focus-hideable">
+            <div class="glass-pill">
+                <div class="search-engine-icon" id="searchEngineIcon" title="Search Engine">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                </div>
+                <input type="text" id="searchInput" placeholder="Search Google..." autocomplete="off" aria-label="Search the web">
+            </div>
+        </div>
+
+        <!-- Bottom Left: Speed Dial -->
+        <div id="speedDial" class="widget-container speed-dial-container focus-hideable">
+            <div class="widget-header">Top Sites</div>
+            <div id="speedDialGrid" class="speed-dial-grid">
+                <!-- Links injected by JS -->
+            </div>
+        </div>
+
+        <!-- Bottom Right: Todo List -->
+        <div id="todoList" class="widget-container todo-container focus-hideable">
+            <div class="widget-header">
+                <span id="todoTitle">Tasks</span>
+                <div class="widget-header-actions">
+                    <button id="clearCompleted" class="icon-btn-small" aria-label="Clear Completed Tasks" title="Clear completed">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                    </button>
+                    <button id="toggleTodo" class="icon-btn-small" aria-label="Toggle Task List">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
+                    </button>
+                </div>
+            </div>
+            <div class="todo-body">
+                <ul id="todoItems" class="todo-items">
+                    <!-- Items injected by JS -->
+                </ul>
+                <div class="todo-input-wrapper">
+                    <input type="text" id="newTodoInput" placeholder="Add a task..." aria-label="Add a new task">
+                </div>
+            </div>
+        </div>
+
+        <!-- Middle Right: Quick Notes -->
+        <div id="notesWidget" class="widget-container notes-container focus-hideable">
+            <div class="widget-header">
+                <span>Notes</span>
+                <div class="widget-header-actions">
+                    <span id="notesCount" class="notes-count">0</span>
+                    <button id="toggleNotes" class="icon-btn-small" aria-label="Toggle Notes">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
+                    </button>
+                </div>
+            </div>
+            <div class="notes-body" id="notesBody">
+                <textarea id="notesInput" class="notes-textarea" placeholder="Write your notes here..." aria-label="Quick notes"></textarea>
+            </div>
+        </div>
+    </div>
+
+    <!-- Keyboard Shortcuts Hint -->
+    <div class="shortcuts-bar" id="shortcutsBar">
+        <span class="shortcut-hint"><kbd>Alt</kbd>+<kbd>S</kbd> Search</span>
+        <span class="shortcut-hint"><kbd>Alt</kbd>+<kbd>F</kbd> Focus</span>
+        <span class="shortcut-hint"><kbd>Alt</kbd>+<kbd>,</kbd> Settings</span>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="modal hidden">
+        <div class="modal-content glass-card">
+            <div class="modal-header">
+                <h2>Settings</h2>
+                <button id="closeSettings" class="icon-btn-small" aria-label="Close Settings">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Personalization -->
+                <div class="settings-section">
+                    <div class="settings-section-title">Personalization</div>
+                    <div class="setting-item">
+                        <label for="userName">Your Name</label>
+                        <input type="text" id="userName" class="setting-input" placeholder="Enter name..." maxlength="24" aria-label="Your name for greeting">
+                    </div>
+                    <div class="setting-item">
+                        <label for="searchEngine">Search Engine</label>
+                        <select id="searchEngine" class="setting-select" aria-label="Select search engine">
+                            <option value="google">Google</option>
+                            <option value="bing">Bing</option>
+                            <option value="duckduckgo">DuckDuckGo</option>
+                            <option value="youtube">YouTube</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Display -->
+                <div class="settings-section">
+                    <div class="settings-section-title">Display</div>
+                    <div class="setting-item">
+                        <label>Dark Mode</label>
+                        <label class="switch">
+                            <input type="checkbox" id="toggleTheme">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <label>Time Format</label>
+                        <button id="toggleTimeFormat" class="toggle-btn">12h</button>
+                    </div>
+                    <div class="setting-item">
+                        <label>Show Seconds</label>
+                        <label class="switch">
+                            <input type="checkbox" id="toggleSeconds">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <label>Show Particles</label>
+                        <label class="switch">
+                            <input type="checkbox" id="toggleParticles" checked>
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Accent Color -->
+                <div class="settings-section">
+                    <div class="settings-section-title">Accent Color</div>
+                    <div class="setting-item">
+                        <div class="color-picker">
+                            <button class="color-btn" data-color="#8b5cf6" style="background:#8b5cf6" aria-label="Purple"></button>
+                            <button class="color-btn" data-color="#ec4899" style="background:#ec4899" aria-label="Pink"></button>
+                            <button class="color-btn" data-color="#14b8a6" style="background:#14b8a6" aria-label="Teal"></button>
+                            <button class="color-btn" data-color="#f59e0b" style="background:#f59e0b" aria-label="Amber"></button>
+                            <button class="color-btn" data-color="#ef4444" style="background:#ef4444" aria-label="Red"></button>
+                            <button class="color-btn" data-color="#3b82f6" style="background:#3b82f6" aria-label="Blue"></button>
+                            <button class="color-btn" data-color="#10b981" style="background:#10b981" aria-label="Green"></button>
+                            <button class="color-btn" data-color="#f97316" style="background:#f97316" aria-label="Orange"></button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Advanced -->
+                <div class="settings-section">
+                    <div class="settings-section-title">Advanced</div>
+                    <div class="setting-item">
+                        <label>Keyboard Shortcuts</label>
+                        <label class="switch">
+                            <input type="checkbox" id="toggleShortcuts" checked>
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <button id="resetPositions" class="toggle-btn" style="width:100%">Reset Widget Positions</button>
+                    </div>
+                </div>
+
+                <!-- Data Management -->
+                <div class="settings-section">
+                    <div class="settings-section-title">Data</div>
+                    <div class="setting-item" style="gap:8px">
+                        <button id="exportData" class="toggle-btn" style="flex:1">Export Backup</button>
+                        <button id="importData" class="toggle-btn" style="flex:1">Import Backup</button>
+                    </div>
+                    <div class="setting-item">
+                        <button id="resetDefaults" class="toggle-btn reset-btn">Reset to Defaults</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Onboarding Overlay (shown once for new users) -->
+    <div id="onboardingOverlay" class="modal hidden">
+        <div class="modal-content glass-card" style="text-align:center; max-width:480px">
+            <div style="margin-bottom:20px">
+                <div style="width:56px;height:56px;margin:0 auto 16px;background:linear-gradient(135deg,var(--accent),#c084fc);border-radius:16px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(139,92,246,0.3)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:28px;height:28px">
+                        <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                        <path d="M2 17l10 5 10-5"/>
+                        <path d="M2 12l10 5 10-5"/>
+                    </svg>
+                </div>
+                <h2 style="font-size:1.4rem;margin-bottom:6px">Welcome to Aetheris</h2>
+                <p style="color:var(--text-muted);font-size:0.9rem;line-height:1.5">Your new tab is now a living dashboard. Here's what you can do:</p>
+            </div>
+            <div style="text-align:left;font-size:0.85rem;color:var(--text);line-height:1.8;padding:0 12px">
+                <div style="margin-bottom:8px"><strong>Pomodoro Timer</strong> - Stay focused with 25-min sessions</div>
+                <div style="margin-bottom:8px"><strong>Tasks & Notes</strong> - Track your to-dos and jot down ideas</div>
+                <div style="margin-bottom:8px"><strong>Focus Mode</strong> - Hide distractions with a motivational quote</div>
+                <div style="margin-bottom:8px"><strong>Drag Widgets</strong> - Rearrange everything to your liking</div>
+                <div style="margin-bottom:8px"><strong>Customize</strong> - Click the gear icon for themes, colors & more</div>
+            </div>
+            <div style="margin-top:20px;font-size:0.75rem;color:var(--text-muted)">
+                <kbd>Alt</kbd>+<kbd>S</kbd> Search &nbsp; <kbd>Alt</kbd>+<kbd>F</kbd> Focus &nbsp; <kbd>Alt</kbd>+<kbd>,</kbd> Settings
+            </div>
+            <button id="onboardingDismiss" style="margin-top:20px;padding:12px 40px;border:none;border-radius:14px;background:linear-gradient(135deg,var(--accent),#c084fc);color:#fff;font-size:1rem;font-weight:600;cursor:pointer;font-family:inherit;box-shadow:0 4px 16px rgba(139,92,246,0.3);transition:transform 0.15s,box-shadow 0.25s">
+                Get Started
+            </button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

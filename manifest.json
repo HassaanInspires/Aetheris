@@ -3,10 +3,11 @@
   "name": "Aetheris - The Living Dashboard",
   "version": "2.1.0",
   "description": "A stunning glassmorphic new tab with Pomodoro timer, quick notes, focus mode, smart search, and productivity tools.",
-  "permissions": [
+  "permissions":[
     "storage",
     "topSites",
-    "notifications"
+    "notifications",
+    "search"
   ],
   "chrome_url_overrides": {
     "newtab": "newtab.html"

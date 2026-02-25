@@ -12,12 +12,6 @@
   const WORK_DURATION = 25 * 60;
   const BREAK_DURATION = 5 * 60;
 
-  const SEARCH_ENGINES = {
-    google:     { name: 'Google',      url: 'https://www.google.com/search?q=', placeholder: 'Search Google...' },
-    bing:       { name: 'Bing',        url: 'https://www.bing.com/search?q=',   placeholder: 'Search Bing...' },
-    duckduckgo: { name: 'DuckDuckGo',  url: 'https://duckduckgo.com/?q=',       placeholder: 'Search DuckDuckGo...' },
-    youtube:    { name: 'YouTube',     url: 'https://www.youtube.com/results?search_query=', placeholder: 'Search YouTube...' }
-  };
 
   const QUOTES = [
     '"The secret of getting ahead is getting started." - Mark Twain',
@@ -49,7 +43,6 @@
     accentColor: '#8b5cf6',
     theme: 'light',
     userName: '',
-    searchEngine: 'google',
     showShortcuts: true,
     positions: {
       speedDial: { left: '40px', bottom: '40px', right: 'auto', top: 'auto' },
@@ -286,26 +279,31 @@
     clockInterval = setInterval(update, 1000);
   }
 
-  // ── Search ──
+  // ── Search (Chrome Web Store Compliant) ──
   function initSearch() {
     const input = document.getElementById('searchInput');
-    updateSearchPlaceholder();
+    input.placeholder = 'Search the web...';
 
     input.addEventListener('keypress', function (e) {
       if (e.key === 'Enter') {
         const query = input.value.trim();
         if (query) {
-          const engine = SEARCH_ENGINES[state.settings.searchEngine] || SEARCH_ENGINES.google;
-          window.location.href = engine.url + encodeURIComponent(query);
+          // Use the official Chrome Search API
+          if (typeof chrome !== 'undefined' && chrome.search) {
+            chrome.search.query({ text: query, disposition: 'CURRENT_TAB' });
+          } else {
+            // Fallback for local testing in a normal browser tab
+            window.location.href = 'https://www.google.com/search?q=' + encodeURIComponent(query);
+          }
         }
       }
     });
   }
 
   function updateSearchPlaceholder() {
+    // Left intentionally blank - we no longer update this based on settings
     const input = document.getElementById('searchInput');
-    const engine = SEARCH_ENGINES[state.settings.searchEngine] || SEARCH_ENGINES.google;
-    input.placeholder = engine.placeholder;
+    input.placeholder = 'Search the web...';
   }
 
   // ── Speed Dial ──
@@ -760,15 +758,6 @@
       saveSettings();
       initClock();
     }, 300));
-
-    // Search Engine
-    var engineSelect = document.getElementById('searchEngine');
-    engineSelect.value = state.settings.searchEngine;
-    engineSelect.addEventListener('change', function () {
-      state.settings.searchEngine = engineSelect.value;
-      saveSettings();
-      updateSearchPlaceholder();
-    });
 
     // Keyboard Shortcuts toggle
     var shortcutsToggle = document.getElementById('toggleShortcuts');
